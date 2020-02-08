@@ -1,22 +1,43 @@
 function Blob(x, y, r) {
-  this.pos = createVector(x,y);
-  this.r = r;
+  this.pos = createVector(x, y);
+  this.typeOrBattle = false;
+  this.r = 64;
+  this.health = 20;
+  this.speed = 3;
 
-  this.update = function() {
-    var velx;
-    var vely;
-    if (keyIsDown(38)) { // up
-      vely = -1;
-    } if (keyIsDown(37)) { // left
-      velx = -1;
-    } if (keyIsDown(40)) { // down
-      vely = 1;
-    } if (keyIsDown(39)) { // right
-      velx = 1;
+  this.update = function () {
+    if (typeOrBattle) {
+
+
+
+
+
+
+
+
+    } else {
+      var velx = 0;
+      var vely = 0;
+      if (keyIsDown(38) || keyIsDown(87)) { // up or 'w'
+        vely--;
+      } if (keyIsDown(37) || keyIsDown(65)) { // left or 'a'
+        velx--;
+      } if (keyIsDown(40) || keyIsDown(83)) { // down or 's'
+        vely++;
+      } if (keyIsDown(39) || keyIsDown(68)) { // right or 'd'
+        velx++;
+      }
+      var vel = createVector(velx, vely);
+      vel.setMag(speed);
+      this.pos.add(vel);
+      if (keyIsDown(75) && this.health > 5) {
+        var bullet = new Bullet(this.pos.x, this.pos.y, c, vel);
+        socket.emit('bullets', bullet);
+        this.health--;
+        r = sqrt(health / PI * (health + 1));
+        speed = 192 / r;
+      }
     }
-    var vel = createVector(velx, vely);
-    vel.setMag(3);
-    this.pos.add(vel);
     var data = {
       x: this.pos.x,
       y: this.pos.y,
@@ -25,7 +46,7 @@ function Blob(x, y, r) {
     socket.emit('update', data);
   }
 
-  this.eats = function(other) {
+  this.eats = function (other) {
     var d = p5.Vector.dist(this.pos, other.pos);
     if (d < this.r + other.r) {
       this.r += other.r;
@@ -35,12 +56,22 @@ function Blob(x, y, r) {
     }
   }
 
-  this.show = function() {
-    fill(255);
-    ellipse(this.pos.x, this.pos.y, this.r*2, this.r*2);
+  this.damaged = function () {
+    if (this.health = 1) {
+      socket.emit('DEAD-Blob', this);
+    } else {
+      this.health--;
+      r = sqrt(health / PI * (health + 1));
+      speed = 192 / r;
+    }
   }
 
-  this.constrain = function() {
+  this.show = function () {
+    fill(255);
+    ellipse(this.pos.x, this.pos.y, this.r * 2, this.r * 2);
+  }
+
+  this.constrain = function () {
     blob.pos.x = constrain(blob.pos.x, -width, width);
     blob.pos.y = constrain(blob.pos.y, -height, height);
   }
