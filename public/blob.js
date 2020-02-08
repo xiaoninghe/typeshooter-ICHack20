@@ -17,14 +17,7 @@ function Blob(x, y, c) {
       this.typeOrBattle = !this.typeOrBattle;
     }
     if (this.typeOrBattle) {
-
-
-
-
-
-
-
-
+////////////////////////////////////////////////////////////
     } else {
       var velx = 0;
       var vely = 0;
