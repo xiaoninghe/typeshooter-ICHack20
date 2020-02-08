@@ -2,12 +2,20 @@ var blob;
 var socket;
 var blobs = [];
 var bullets = [];
+var allWords = [];
+var words = [];
+var newWordNeeded = false;
 
 function setup() {
   // put setup code here
   createCanvas(1000, 540);
-  socket = io.connect('https://xiaoning-he.github.io/public/');
+  socket = io.connect('http://localhost:3000');
   blob = new Blob(random(width), random(height), 64);
+
+  allWords = loadStrings('words.txt');
+  for (var i = 0; i < 10; i++) {
+    words[i] = allWords[int(random(allWords.length))]
+  }
 
   var data = {
     x: blob.pos.x,
@@ -24,7 +32,10 @@ function setup() {
 
 function draw() {
   background(255);
-  translate(width/2-blob.pos.x, height/2-blob.pos.y);
+
+  translate(width/2, height/2);
+  scale(blob.r / 64);
+  translate(-blob.pos.x-100, -blob.pos.y);
   for (var x = -1.5*width; x < 1.5*width; x += 250) {
     stroke(200);
     strokeWeight(1);
@@ -54,10 +65,14 @@ function draw() {
   blob.update();
   blob.constrain();
 
+  fill(255);
+  rect(blob.pos.x+400,blob.pos.y-275,210,550);
+  fill(0);
+
+  if (newWordNeeded) {
+    text(words[int(random(words.length))],blob.pos.x,blob.pos.y);
+  }
   for (var i = 0; i < bullets.length; i++) {
     bullets[i].update();
   }
-
-  fill(0);
-  rect(800,0,200,540);
 }
