@@ -2,20 +2,17 @@ var blob;
 var socket;
 var blobs = [];
 var bullets = [];
-var allWords = [];
+var allWords = ["over","let","picture","us","out","big","world","family","does","place","try","took","those","white","like","help","was","page","they","should","so","get","one","left","see"];
 var words = [];
 var newWordNeeded = false;
+var word;
+var tempword;
 
 function setup() {
   // put setup code here
   createCanvas(1000, 540);
   socket = io.connect('http://localhost:3000');
   blob = new Blob(random(width), random(height), 64);
-
-  allWords = loadStrings('words.txt');
-  for (var i = 0; i < 10; i++) {
-    words[i] = allWords[int(random(allWords.length))]
-  }
 
   var data = {
     x: blob.pos.x,
@@ -28,6 +25,29 @@ function setup() {
       blobs = data;
     }
   );
+  for (var i = 0; i < 10; i++) {
+    words[i] = allWords[int(random(allWords.length))]
+  }
+  word = words[0];
+  tempword = words[0];
+}
+
+
+
+function keyTyped() {
+  if (key === tempword[0]) {
+    tempword = tempword.substring(1,tempword.length);
+    if (tempword.length == 0) {
+      for (var i = 0; i < words.length-1; i++) {
+        words[i] = words[i+1]
+      }
+      word = words[0]
+      tempword = words[0];
+      words[words.length-1] = allWords[int(random(allWords.length))];
+    }
+  } else {
+    tempword = word;
+  }
 }
 
 function draw() {
@@ -67,11 +87,17 @@ function draw() {
 
   fill(255);
   rect(blob.pos.x+400,blob.pos.y-275,210,550);
-  fill(0);
 
-  if (newWordNeeded) {
-    text(words[int(random(words.length))],blob.pos.x,blob.pos.y);
+  fill(0);
+  textSize(20);
+  for (var i = 0; i < 10; i++) {
+    if (i == 0) {
+      text(words[i],blob.pos.x+425,blob.pos.y-235+i*20)
+    } else {
+      text(words[i],blob.pos.x+425,blob.pos.y-220+i*20)
+    }
   }
+
   for (var i = 0; i < bullets.length; i++) {
     bullets[i].update();
   }

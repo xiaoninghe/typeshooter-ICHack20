@@ -3,8 +3,8 @@ function Blob(x, y, r) {
   this.r = r;
 
   this.update = function() {
-    var velx;
-    var vely;
+    var velx = 0;
+    var vely = 0;
     if (keyIsDown(38)) { // up
       vely = -1;
     } if (keyIsDown(37)) { // left
@@ -15,6 +15,10 @@ function Blob(x, y, r) {
       velx = 1;
     }
     var vel = createVector(velx, vely);
+    fill(0);
+    if (velx != 0 || vely != 0) {
+      ellipse(this.pos.x+velx*(this.r+10),this.pos.y+vely*(this.r+10),10);
+    }
     vel.setMag(3);
     this.pos.add(vel);
     var data = {
