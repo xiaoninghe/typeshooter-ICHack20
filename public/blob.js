@@ -1,12 +1,22 @@
-function Blob(x, y, r) {
+var initialRadius = 64;
+var initialHealth = 20;
+var initialSpeed = 3;
+var ratioAttackHealth = 0.1;
+var lowerLimitOfHealthForAttack = 5;
+var lastMoveDirection = createVector(1, 0);
+
+function Blob(x, y, c) {
   this.pos = createVector(x, y);
-  this.typeOrBattle = false;
-  this.r = 64;
-  this.health = 20;
-  this.speed = 3;
+  this.typeOrBattle = false; //  spawns in battle mode
+  this.r = initialRadius;
+  this.health = initialHealth;
+  this.speed = initialSpeed;
 
   this.update = function () {
-    if (typeOrBattle) {
+    if (keyIsDown(9)) {
+      this.typeOrBattle = !this.typeOrBattle;
+    }
+    if (this.typeOrBattle) {
 
 
 
@@ -28,14 +38,17 @@ function Blob(x, y, r) {
         velx++;
       }
       var vel = createVector(velx, vely);
-      vel.setMag(speed);
+      vel.setMag(this.speed);
       this.pos.add(vel);
-      if (keyIsDown(75) && this.health > 5) {
-        var bullet = new Bullet(this.pos.x, this.pos.y, c, vel);
+      if (vel != createVector(0, 0)) {
+        lastMoveDirection = vel;
+      }
+      if (keyIsDown(75) && this.health > lowerLimitOfHealthForAttack) {
+        var bullet = new Bullet(this.pos.x, this.pos.y, c, lastMoveDirection, this.health * ratioAttackHealth);
         socket.emit('bullets', bullet);
         this.health--;
-        r = sqrt(health / PI * (health + 1));
-        speed = 192 / r;
+        this.r = sqrt(this.health / PI * (this.health + 1));
+        this.speed = 192 / this.r;
       }
     }
     var data = {
@@ -56,18 +69,18 @@ function Blob(x, y, r) {
     }
   }
 
-  this.damaged = function () {
-    if (this.health = 1) {
+  this.damaged = function (d) {
+    if (this.health <= d) {
       socket.emit('DEAD-Blob', this);
     } else {
-      this.health--;
-      r = sqrt(health / PI * (health + 1));
-      speed = 192 / r;
+      this.health -= d;
+      this.r = sqrt(this.health / PI * (this.health + d));
+      this.speed = 192 / this.r;
     }
   }
 
   this.show = function () {
-    fill(255);
+    fill(c);
     ellipse(this.pos.x, this.pos.y, this.r * 2, this.r * 2);
   }
 

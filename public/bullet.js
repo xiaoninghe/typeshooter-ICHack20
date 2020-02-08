@@ -1,23 +1,23 @@
 var blobs = [];
 var range = 5;
+var size = 8;
+var speed = 10;
 
-function Bullet(x, y, c, d) {
+function Bullet(x, y, c, v, d) {
     this.pos = createVector(x, y);
-    this.s = 8;
-    this.speed = 10;
-    this.dire = d.setMag(speed);
+    this.dire = v.setMag(speed);
     this.travelled = 0
 
     this.show() = function () {
         fill(c);
-        fillRect(this.pos.x, this.pos.y, s, s);
+        rect(this.pos.x, this.pos.y, size, size);
     }
 
     this.update = function () {
-        if (this.travelled > 4) {
+        if (this.travelled >= range) {
             socket.emit('DEAD-Bullet', this);
         } else {
-            this.pos.add(dire);
+            this.pos.add(this.dire);
             socket.on('heartbeat',
                 function (data) {
                     blobs = data;
@@ -25,11 +25,11 @@ function Bullet(x, y, c, d) {
             );
             for (var i = 0; i < blobs.length; i++) {
                 if (blobs[i].eats(this)) {
-                    blobs[i].damaged();
+                    blobs[i].damaged(d);
                     socket.emit('DEAD-Bullet', this);
                 }
             }
-            travelled++;
+            this.travelled++;
         }
     }
 }
