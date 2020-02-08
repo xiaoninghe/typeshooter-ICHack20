@@ -57,6 +57,14 @@ io.sockets.on(
       blobs.push(blob);
     });
 
+    // socket.on('bullets', function(data) {
+    //
+    // });
+    //
+    // socket.on('delete-bullet', function(data) {
+    //
+    // });
+
     socket.on('update', function(data) {
       //console.log(socket.id + " " + data.x + " " + data.y + " " + data.r);
       var blob;
@@ -72,6 +80,12 @@ io.sockets.on(
 
     socket.on('disconnect', function() {
       console.log('Client has disconnected');
+      for (var i = blobs.length-1; i >= 0; i--) {
+        if (blobs[i].id == socket.id) {
+          console.log(blobs[i].id);
+          blobs.splice(i, 1);
+        }
+      }
     });
   }
 );
