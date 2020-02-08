@@ -6,7 +6,7 @@ var bullets = [];
 function setup() {
   // put setup code here
   createCanvas(1000, 540);
-  socket = io.connect('http://localhost:3000');
+  socket = io.connect('https://xiaoning-he.github.io/public/');
   blob = new Blob(random(width), random(height), 64);
 
   var data = {
@@ -59,5 +59,5 @@ function draw() {
   }
 
   fill(0);
-  rect(800-blob.pos.x,0-blob.pos.y,200,540);
+  rect(800,0,200,540);
 }
