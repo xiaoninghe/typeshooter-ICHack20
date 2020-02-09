@@ -1,4 +1,4 @@
-# Xiaoning-He.github.io
+# TypeShooter
 
 Created by Xiaoning He, Emre Aydin, and Yuang Li in 24 hours at IC Hack 20.
 A multiplayer 2D arena where you gain health and ammo by typing words and attack others to win it all!
