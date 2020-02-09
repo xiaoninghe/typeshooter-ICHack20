@@ -7,7 +7,7 @@ var idCount = 0;
 function setup() {
   // put setup code here
   createCanvas(1000, 540);
-  socket = io.connect('http://localhost:3000');
+  socket = io.connect('https://typeshooter.herokuapp.com');
   blob = new Blob(random(width), random(height), random(256), 0);
 
   var data = {
