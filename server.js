@@ -1,11 +1,3 @@
-// Daniel Shiffman
-// http://codingtra.in
-// http://patreon.com/codingtrain
-// Code for: https://youtu.be/ZjVyKXp9hec
-
-// Based off of Shawn Van Every's Live Web
-// http://itp.nyu.edu/~sve204/liveweb_fall2013/week3.html
-
 var blobs = [];
 var bullets = [];
 

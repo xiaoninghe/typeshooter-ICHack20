@@ -9,7 +9,7 @@ var WHITE = 255;
 function setup() {
   // put setup code here
   createCanvas(displayWidth, displayHeight);
-  socket = io.connect('https://typeshooter.herokuapp.com');
+  socket = io.connect('http://localhost:3000');
   blob = new Blob(random(width), random(height), WHITE, 0);
 
   var data = {
@@ -33,48 +33,46 @@ function setup() {
 function draw() {
   background(BLACK);
 
-  translate(width / 2-blob.pos.x - 100, height / 2-blob.pos.y);
+  translate(width / 2 - blob.pos.x, height / 2 - blob.pos.y - 100);
   for (var x = -1.5 * width; x < 1.5 * width; x += 250) {
     stroke(216);
     strokeWeight(1);
     line(x, -1.5 * height, x, 1.5 * height);
   }
   for (var y = -1.5 * height; y < 1.5 * height; y += 250) {
-    stroke(200);
+    stroke(216);
     strokeWeight(1);
     line(-2 * width, y, 2 * width, y);
   }
 
   for (var i = blobs.length - 1; i >= 0; i--) {
     if (blobs[i].id !== socket.id) {
-      fill(0, 0, 255);
+      fill(255, 127, 0);
       ellipse(blobs[i].x, blobs[i].y, blobs[i].r * 2, blobs[i].r * 2);
 
-      fill(255);
+      fill(WHITE);
       textAlign(CENTER);
-      text(blobs[i].id, blobs[i].x, blobs[i].y + blobs[i].r * 1.5);
+      text(allNames[random(allNames.length)]);
     }
-    //   blobs[i].show();
-    //   if (blob.eats(blobs[i])) {
-    //     blobs.splice(i, 1);
-    //   }
   }
   blob.show();
   blob.update();
   blob.constrain();
 
-  fill(255);
-  rect(blob.pos.x + 400, blob.pos.y - 275, 210, 550);
+  fill(WHITE);
+  rect(blob.pos.x + 400, blob.pos.y - 370, 200, 270);
 
-  fill(0);
+  fill(BLACK);
   textSize(20);
   for (var i = 0; i < 10; i++) {
     if (i == 0) {
-      text(words[i], blob.pos.x + 425, blob.pos.y - 235 + i * 20)
+      text(words[i], blob.pos.x + 500, blob.pos.y - 335 + i * 20)
     } else {
-      text(words[i], blob.pos.x + 425, blob.pos.y - 220 + i * 20)
+      text(words[i], blob.pos.x + 500, blob.pos.y - 320 + i * 20)
     }
   }
+  fill(WHITE);
+  textSize(48);
   var typeOrBattle = blob.getMode();
   var modetext;
   if (typeOrBattle) {
@@ -82,7 +80,7 @@ function draw() {
   } else {
     modetext = "Attacking"
   }
-  text(modetext, blob.pos.x - 395, blob.pos.y - 250)
+  text(modetext, blob.pos.x - 540, blob.pos.y - 320)
 
   if (blob.health <= 0) {
     // blob.hide();
@@ -93,10 +91,12 @@ function draw() {
       }
     }
     fill(50);
+    rect(blob.pos.x - 250, blob.pos.y - 150, 500, 300);
+    fill(WHITE);
     text("You died.\nScore : " + blobKills + "\nRefresh the page to try again.", blob.pos.x, blob.pos.y);
   }
 
-  text("Health: " + blob.getHealth(), blob.pos.x - 395, blob.pos.y + 260)
+  text("Health: " + blob.getHealth(), blob.pos.x - 540, blob.pos.y + 360)
 
   var bullet;
   for (var i = 0; i < bullets.length; i++) {

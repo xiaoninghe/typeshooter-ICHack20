@@ -4,6 +4,7 @@ var initialSpeed = 3;
 var ratioAttackHealth = 0.1;
 var lowerLimitOfHealthForAttack = 5;
 var allWords = ["over", "let", "picture", "us", "out", "big", "world", "family", "does", "place", "try", "took", "those", "white", "like", "help", "was", "page", "they", "should", "so", "get", "one", "left", "see"];
+var allNames = ["America","Balloon","Biscuit","Blanket","Chicken","Chimney","Country","Cupcake","Curtain","Diamond","Eyebrow","Fireman","Florida","Germany","Harpoon","Husband","Morning","Octopus","Popcorn","Printer","Sandbox","Skyline","Spinach"]
 var words = [];
 var newWordNeeded = false;
 var word;
