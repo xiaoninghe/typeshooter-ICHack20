@@ -9,13 +9,15 @@ var newWordNeeded = false;
 var word;
 var tempword;
 var typeOrBattle = false; //  spawns in battle mode
+var bullets = [];
 
-function Blob(x, y, c) {
+function Blob(x, y, c, kills) {
   this.pos = createVector(x, y);
   this.r = initialRadius;
   this.health = initialHealth;
   this.speed = initialSpeed;
   this.lastMoveDirection = createVector(1, 0);
+  this.kills = kills
   for (var i = 0; i < 10; i++) {
     words[i] = allWords[int(random(allWords.length))]
   }
@@ -29,6 +31,11 @@ function Blob(x, y, c) {
   this.update = function () {
     var velx = 0;
     var vely = 0;
+
+    socket.on('bulletheartbeat', function (data) {
+      bullets = data;
+    });
+
     if (!typeOrBattle) {
       if (keyIsDown(38) || keyIsDown(87)) { // up or 'w'
         vely--;
@@ -39,24 +46,28 @@ function Blob(x, y, c) {
       } if (keyIsDown(39) || keyIsDown(68)) { // right or 'd'
         velx++;
       }
+
       if (keyIsDown(75) && this.health > lowerLimitOfHealthForAttack && !typeOrBattle) {
         if (velx != 0 || vely != 0) {
-          var bullet = new Bullet(this.pos.x + velx*(this.r + 100), this.pos.y + vely*(this.r + 100), c, this.lastMoveDirection, this.health * ratioAttackHealth);
           var data1 = {
+            id: idCount,
             x: this.pos.x,
             y: this.pos.y,
-            c: this.c,
-            v: this.v,
-            d: this.d
+            c: c,
+            velx: this.lastMoveDirection.x,
+            vely: this.lastMoveDirection.y,
+            d: this.health * ratioAttackHealth,
+            parent: socket.id
           };
-          print("test")
-          socket.emit('updatebullets', data1);
+          socket.emit('addbullets', data1);
+          idCount++;
           this.health--;
           // this.r = this.r * sqrt(this.health / (PI * (this.health + 1)));
           this.r = 64*sqrt(this.health/20)
           this.speed = 192 / this.r;
         }
       }
+
       var vel = createVector(velx, vely);
       vel.setMag(this.speed);
       this.pos.add(vel);
@@ -64,49 +75,41 @@ function Blob(x, y, c) {
         this.lastMoveDirection = vel;
       }
     }
+
+    var bullet;
+    for (var i = 0; i < bullets.length; i++) {
+      bullet = new Bullet(bullets[i].id, bullets[i].x, bullets[i].y, bullets[i].c, bullets[i].velx, bullets[i].vely, bullets[i].d, bullets[i].parent);
+      if (this.eats(bullet)) {
+        print(socket.id, bullet.parent);
+        if (bullet.parent !== socket.id) {
+          this.damaged({d: bullet.d, parent: bullet.parent});
+          socket.emit('DEAD-Bullet', bullets[i]);
+        }
+      }
+    }
+
     var data = {
       x: this.pos.x,
       y: this.pos.y,
-      r: this.r
+      r: this.r,
+      kills: this.kills
     };
     socket.emit('update', data);
   }
 
-  // this.getData = function() {
-  //   if (keyIsDown(75) && this.health > lowerLimitOfHealthForAttack && !typeOrBattle) {
-  //     if (this.velx != 0 || this.vely != 0) {
-  //       var bullet = new Bullet(this.pos.x + this.velx*(this.r + 100), this.pos.y + this.vely*(this.r + 100), c, this.lastMoveDirection, this.health * ratioAttackHealth);
-  //       var data1 = {
-  //         x: this.pos.x,
-  //         y: this.pos.y,
-  //         c: this.c,
-  //         v: this.v,
-  //         d: this.d
-  //       };
-  //       // print("test")
-  //       // socket.emit('updatebullets', data1);
-  //       this.health--;
-  //       // this.r = this.r * sqrt(this.health / (PI * (this.health + 1)));
-  //       this.r = 64*sqrt(this.health/20)
-  //       this.speed = 192 / this.r;
-  //     }
-  //     return data1;
-  //   }
+  // this.respawn = function (other) {
+  //   this.pos.x = random(width);
+  //   this.pos.y = random(height);
+  //   this.r = initialRadius;
+  //   this.health = initialHealth;
+  //   this.speed = initialSpeed;
   // }
-
-  this.respawn = function (other) {
-    this.pos.x = random(width);
-    this.pos.y = random(height);
-    this.r = initialRadius;
-    this.health = initialHealth;
-    this.speed = initialSpeed;
-
-  }
 
   this.eats = function (other) {
     var d = p5.Vector.dist(this.pos, other.pos);
-    if (d < this.r + other.r) {
-      this.r += other.r;
+    // print(d)
+    // print(this.r + other.r)
+    if (d <= this.r + other.r) {
       return true;
     } else {
       return false;
@@ -114,10 +117,12 @@ function Blob(x, y, c) {
   }
 
   this.damaged = function (d) {
-    if (this.health <= d) {
-      socket.emit('DEAD-Blob', this);
+    if (this.health <= d.d) {
+      this.health = 0;
+      socket.emit('DEAD-Blob', {blob: this.id, bullet: d.parent});
+      // print("test");
     } else {
-      this.health -= d;
+      this.health -= d.d;
       // this.r = this.r * sqrt(this.health / (PI * (this.health + d)));
       this.r = 64*sqrt(this.health/20)
       this.speed = 192 / this.r;
@@ -140,7 +145,7 @@ function Blob(x, y, c) {
 
   this.incrementHealth = function() {
     if (this.health < 100) {
-      this.health++;
+      this.health = this.health + 2;
     }
   }
 

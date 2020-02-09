@@ -2,17 +2,19 @@ var blob;
 var socket;
 var blobs = [];
 var bullets = [];
+var idCount = 0;
 
 function setup() {
   // put setup code here
   createCanvas(1000, 540);
   socket = io.connect('http://localhost:3000');
-  blob = new Blob(random(width), random(height), 64);
+  blob = new Blob(random(width), random(height), random(256), 0);
 
   var data = {
     x: blob.pos.x,
     y: blob.pos.y,
-    r: blob.r
+    r: blob.r,
+    kills: blob.kills
   };
   socket.emit('start', data);
   socket.on('heartbeat',
@@ -80,10 +82,24 @@ function draw() {
   }
   text(modetext, blob.pos.x - 395, blob.pos.y - 250)
 
+  if (blob.health <= 0) {
+    // blob.hide();
+    var blobKills = 0;
+    for (var i = 0; i < blobs.length; i++) {
+      if (socket.id == blobs[i].id) {
+        blobKills = blobs[i].kills;
+      }
+    }
+    fill(50);
+    text("You died.\nScore : " + blobKills + "\nRefresh the page to try again.", blob.pos.x, blob.pos.y);
+  }
+
   text("Health: " + blob.getHealth(), blob.pos.x - 395, blob.pos.y + 260)
 
+  var bullet;
   for (var i = 0; i < bullets.length; i++) {
-    bullets[i].show();
-    bullets[i].update();
+    bullet = new Bullet(bullets[i].id, bullets[i].x, bullets[i].y, bullets[i].c, bullets[i].velx, bullets[i].vely, bullets[i].d, bullets[i].parent)
+    bullet.show();
+    bullet.update();
   }
 }
