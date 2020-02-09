@@ -9,7 +9,7 @@ var WHITE = 255;
 function setup() {
   // put setup code here
   createCanvas(displayWidth, displayHeight);
-  socket = io.connect('http://localhost:3000');
+  socket = io.connect('https://typeshooter.herokuapp.com');
   blob = new Blob(random(width), random(height), WHITE, 0);
 
   var data = {
@@ -63,6 +63,7 @@ function draw() {
   rect(blob.pos.x + 400, blob.pos.y - 370, 200, 270);
 
   fill(BLACK);
+  textAlign(CENTER);
   textSize(20);
   for (var i = 0; i < 10; i++) {
     if (i == 0) {
@@ -96,7 +97,7 @@ function draw() {
     text("You died.\nScore : " + blobKills + "\nRefresh the page to try again.", blob.pos.x, blob.pos.y);
   }
 
-  text("Health: " + blob.getHealth(), blob.pos.x - 540, blob.pos.y + 360)
+  text("Health: " + round(blob.getHealth()), blob.pos.x - 540, blob.pos.y + 360)
 
   var bullet;
   for (var i = 0; i < bullets.length; i++) {

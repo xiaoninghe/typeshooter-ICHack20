@@ -145,8 +145,10 @@ function Blob(x, y, c, kills) {
   }
 
   this.incrementHealth = function() {
-    if (this.health < 100) {
+    if (this.health < 99) {
       this.health = this.health + 2;
+    } else {
+      this.health = 100;
     }
   }
 
