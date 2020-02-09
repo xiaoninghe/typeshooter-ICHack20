@@ -1,5 +1,5 @@
 var blobs = [];
-var range = 5;
+var range = 12345;
 var size = 8;
 var speed = 10;
 
@@ -8,7 +8,7 @@ function Bullet(x, y, c, v, d) {
     this.dire = v.setMag(speed);
     this.travelled = 0
 
-    this.show() = function () {
+    this.show = function () {
         fill(c);
         rect(this.pos.x, this.pos.y, size, size);
     }
