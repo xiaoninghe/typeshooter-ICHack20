@@ -3,12 +3,14 @@ var socket;
 var blobs = [];
 var bullets = [];
 var idCount = 0;
+var BLACK = 0;
+var WHITE = 255;
 
 function setup() {
   // put setup code here
-  createCanvas(1000, 540);
+  createCanvas(displayWidth, displayHeight);
   socket = io.connect('https://typeshooter.herokuapp.com');
-  blob = new Blob(random(width), random(height), random(256), 0);
+  blob = new Blob(random(width), random(height), WHITE, 0);
 
   var data = {
     x: blob.pos.x,
@@ -29,11 +31,11 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  background(BLACK);
 
   translate(width / 2-blob.pos.x - 100, height / 2-blob.pos.y);
   for (var x = -1.5 * width; x < 1.5 * width; x += 250) {
-    stroke(200);
+    stroke(216);
     strokeWeight(1);
     line(x, -1.5 * height, x, 1.5 * height);
   }
