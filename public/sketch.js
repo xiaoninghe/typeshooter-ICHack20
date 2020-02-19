@@ -7,12 +7,12 @@ var BLACK = 0;
 var WHITE = 255;
 
 const WEBSITE = 'https://typeshooter.herokuapp.com';
-const LOCAL = "http://localhost:3000"
+const LOCAL = "http://localhost:3000";
 
 function setup() {
   // put setup code here
   createCanvas(displayWidth, displayHeight);
-  socket = io.connect(LOCAL);
+  socket = io.connect(WEBSITE);
   blob = new Blob(random(width), random(height), WHITE, 0);
 
   var data = {
