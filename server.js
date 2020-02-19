@@ -1,6 +1,8 @@
 var blobs = [];
 var bullets = [];
 
+const RANGE = 20;
+
 function Blob(id, x, y, r, kills) {
   this.id = id;
   this.x = x;
@@ -9,7 +11,7 @@ function Blob(id, x, y, r, kills) {
   this.kills = kills
 }
 
-function Bullet(id, x, y, c, velx, vely, d, parent) {
+function Bullet(id, x, y, c, velx, vely, d, parent, travelled) {
   this.id = id;
   this.x = x;
   this.y = y;
@@ -18,6 +20,7 @@ function Bullet(id, x, y, c, velx, vely, d, parent) {
   this.vely = vely;
   this.d = d;
   this.parent = parent;
+  this.travelled = travelled;
 }
 
 // Using express: http://expressjs.com/
@@ -38,7 +41,7 @@ function listen() {
 
 app.use(express.static('public'));
 
-// WebSocket Portion
+// WebSocket Portionbullet
 // WebSockets work with the HTTP server
 var io = require('socket.io')(server);
 
@@ -68,7 +71,7 @@ io.sockets.on(
     });
 
     socket.on('addbullets', function(data) {
-      var bullet = new Bullet(data.id, data.x, data.y, data.c, data.velx, data.vely, data.d, data.parent);
+      var bullet = new Bullet(data.id, data.x, data.y, data.c, data.velx, data.vely, data.d, data.parent, data.travelled);
       bullets.push(bullet);
     });
 
@@ -76,11 +79,18 @@ io.sockets.on(
       var bullet;
       // console.log(bullets);
       for (var i = 0; i < bullets.length; i++) {
+        // console.log(bullets[i].travelled);
         if (data.id == bullets[i].id) {
           bullet = bullets[i];
           bullet.id = data.id
           bullet.x = data.x;
           bullet.y = data.y;
+          bullet.travelled = data.travelled;
+          if(bullets[i].travelled >= RANGE) {
+            // console.log("bullet died");
+            bullets.splice(i,1);
+          }
+          break;
         }
       }
       // var bullet = new Bullet(data.id, data.x, data.y, data.c, data.velx, data.vely, data.d);
@@ -88,9 +98,9 @@ io.sockets.on(
       // console.log(bullets);
     });
     //
-    socket.on('DEAD-Bullet', function(data) {
-      bullets.pop(data);
-    });
+    // socket.on('DEAD-Bullet', function(data) {
+    //   bullets.pop(data);
+    // });
     //
     socket.on('DEAD-Blob', function(data) {
       // console.log("blob dead")

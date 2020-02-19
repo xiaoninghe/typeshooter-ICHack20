@@ -58,7 +58,8 @@ function Blob(x, y, c, kills) {
             velx: this.lastMoveDirection.x,
             vely: this.lastMoveDirection.y,
             d: this.health * ratioAttackHealth,
-            parent: socket.id
+            parent: socket.id,
+            travelled: 0
           };
           socket.emit('addbullets', data1);
           idCount++;
@@ -79,9 +80,9 @@ function Blob(x, y, c, kills) {
 
     var bullet;
     for (var i = 0; i < bullets.length; i++) {
-      bullet = new Bullet(bullets[i].id, bullets[i].x, bullets[i].y, bullets[i].c, bullets[i].velx, bullets[i].vely, bullets[i].d, bullets[i].parent);
+      bullet = new Bullet(bullets[i].id, bullets[i].x, bullets[i].y, bullets[i].c, bullets[i].velx, bullets[i].vely, bullets[i].d, bullets[i].parent, bullets[i].travelled);
       if (this.eats(bullet)) {
-        print(socket.id, bullet.parent);
+        // print(socket.id, bullet.parent);
         if (bullet.parent !== socket.id) {
           this.damaged({d: bullet.d, parent: bullet.parent});
           socket.emit('DEAD-Bullet', bullets[i]);
@@ -150,6 +151,8 @@ function Blob(x, y, c, kills) {
     } else {
       this.health = 100;
     }
+    this.r = 64*sqrt(this.health/20)
+    this.speed = 192 / this.r;
   }
 
   this.setRadius = function() {

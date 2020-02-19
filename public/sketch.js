@@ -6,10 +6,13 @@ var idCount = 0;
 var BLACK = 0;
 var WHITE = 255;
 
+const WEBSITE = 'https://typeshooter.herokuapp.com';
+const LOCAL = "http://localhost:3000"
+
 function setup() {
   // put setup code here
   createCanvas(displayWidth, displayHeight);
-  socket = io.connect('https://typeshooter.herokuapp.com');
+  socket = io.connect(LOCAL);
   blob = new Blob(random(width), random(height), WHITE, 0);
 
   var data = {
@@ -101,7 +104,7 @@ function draw() {
 
   var bullet;
   for (var i = 0; i < bullets.length; i++) {
-    bullet = new Bullet(bullets[i].id, bullets[i].x, bullets[i].y, bullets[i].c, bullets[i].velx, bullets[i].vely, bullets[i].d, bullets[i].parent)
+    bullet = new Bullet(bullets[i].id, bullets[i].x, bullets[i].y, bullets[i].c, bullets[i].velx, bullets[i].vely, bullets[i].d, bullets[i].parent, bullets[i].travelled)
     bullet.show();
     bullet.update();
   }
