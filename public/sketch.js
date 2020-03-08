@@ -86,7 +86,7 @@ function draw() {
   }
   text(modetext, blob.pos.x - 540, blob.pos.y - 320)
 
-  if (blob.health <= 0) {
+  if (round(blob.getHealth()) <= 0) {
     // blob.hide();
     var blobKills = 0;
     for (var i = 0; i < blobs.length; i++) {

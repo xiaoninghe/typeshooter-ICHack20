@@ -1,5 +1,5 @@
 var size = 8;
-var speed = 32;
+var speed = 64;
 
 function Bullet(id, x, y, c, velx, vely, d, parent, travelled) {
     this.id = id;
